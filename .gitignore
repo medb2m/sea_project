@@ -1,0 +1,9 @@
+*.o
+mono
+multi
+benchmark
+*.txt
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
