@@ -10,13 +10,13 @@ mkdir -p input
 rm -f input/*
 
 # Générer 100 fichiers de différentes tailles
-for i in {1..100}; do
+for i in {1..200}; do
     # Tailles variées : 100KB à 2MB
     size=$((100 + (i % 20) * 100))
     dd if=/dev/urandom of=input/file_$(printf "%03d" $i).dat bs=1K count=$size 2>/dev/null
-    echo -n "."
+    if [ $((i % 20)) -eq 0 ]; then echo -n "."; fi
 done
 
 echo ""
-echo "✅ 100 fichiers générés dans input/"
+echo "✅ 200 fichiers générés dans input/"
 ls -lh input/ | head -10

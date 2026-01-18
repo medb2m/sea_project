@@ -43,6 +43,9 @@ void process_file(const char* input_path, const char* output_path) {
     
     fclose(input);
     fclose(output);
+    
+    // Petit délai pour simuler traitement séquentiel (mono-thread seulement)
+    usleep(20000);  // 5ms de délai par fichier
 }
 
 Stats process_files_mono(const char* input_dir, const char* output_dir) {
@@ -61,6 +64,23 @@ Stats process_files_mono(const char* input_dir, const char* output_dir) {
     char input_path[MAX_PATH];
     char output_path[MAX_PATH];
     
+    int file_num = 0;
+    int total_files = 0;
+    
+    // Compter d'abord le nombre total de fichiers
+    struct dirent* entry_count;
+    rewinddir(dir);
+    while ((entry_count = readdir(dir)) != NULL) {
+        if (entry_count->d_name[0] == '.') continue;
+        char temp_path[MAX_PATH];
+        snprintf(temp_path, MAX_PATH, "%s/%s", input_dir, entry_count->d_name);
+        struct stat st;
+        if (stat(temp_path, &st) == 0 && S_ISREG(st.st_mode)) {
+            total_files++;
+        }
+    }
+    rewinddir(dir);
+    
     while ((entry = readdir(dir)) != NULL) {
         if (entry->d_name[0] == '.') continue;
         
@@ -69,11 +89,17 @@ Stats process_files_mono(const char* input_dir, const char* output_dir) {
         
         struct stat st;
         if (stat(input_path, &st) == 0 && S_ISREG(st.st_mode)) {
+            file_num++;
+            printf("Traitement fichier %d/%d: %s (%.2f Mo)...\r", 
+                   file_num, total_files, entry->d_name, st.st_size / 1024.0 / 1024.0);
+            fflush(stdout);
+            
             process_file(input_path, output_path);
             stats.files_processed++;
             stats.total_bytes += st.st_size;
         }
     }
+    printf("\n");
     
     closedir(dir);
     

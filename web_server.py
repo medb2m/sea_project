@@ -137,6 +137,27 @@ def api_status():
             'pid': current_process.pid if current_process else None
         }
         
+        # Si le processus est en cours, essayer de lire la sortie en temps réel
+        if is_running:
+            try:
+                # Lire la dernière ligne de sortie sans bloquer
+                import select
+                import fcntl
+                
+                # Configurer le stdout en mode non-bloquant
+                flags = fcntl.fcntl(current_process.stdout, fcntl.F_GETFL)
+                fcntl.fcntl(current_process.stdout, fcntl.F_SETFL, flags | os.O_NONBLOCK)
+                
+                # Lire les dernières lignes
+                try:
+                    lines = current_process.stdout.readlines()
+                    if lines:
+                        result['progress'] = lines[-1].strip() if lines else ''
+                except:
+                    pass
+            except:
+                pass
+        
         if not is_running:
             # Récupérer la sortie
             stdout, stderr = current_process.communicate()

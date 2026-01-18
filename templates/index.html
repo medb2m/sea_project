@@ -474,6 +474,12 @@
                         document.getElementById('btn-mono').disabled = true;
                         document.getElementById('btn-multi').disabled = true;
                         document.getElementById('btn-benchmark').disabled = true;
+                        
+                        // Afficher la progression en temps réel
+                        if (data.progress) {
+                            const progressFill = document.getElementById('progress-fill');
+                            progressFill.textContent = data.progress;
+                        }
                     } else {
                         document.getElementById('progress-bar').classList.remove('show');
                         document.getElementById('btn-mono').disabled = false;

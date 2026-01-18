@@ -43,15 +43,20 @@ void process_file(const char* input_path, const char* output_path) {
     size_t bytes_read;
     
     while ((bytes_read = fread(buffer, 1, BUFFER_SIZE, input)) > 0) {
-        // Simulation de traitement
+        // Simulation de traitement: appliquer une transformation
         for (size_t i = 0; i < bytes_read; i++) {
             buffer[i] = buffer[i] ^ 0xAA;
         }
         
-        // Simulation de calcul intensif
-        volatile int dummy = 0;
-        for (int j = 0; j < 1000; j++) {
-            dummy += j;
+        // Simulation de calcul CPU-bound (identique à mono.c)
+        volatile long long dummy = 0;
+        for (int j = 0; j < 100000; j++) {
+            dummy += j * j;
+            if (j % 100 == 0) {
+                dummy = dummy % 100000;
+                // Opération supplémentaire pour ralentir
+                dummy = dummy ^ 0xFFFF;
+            }
         }
         
         fwrite(buffer, 1, bytes_read, output);
@@ -113,7 +118,7 @@ double process_files_multi(const char* input_dir, const char* output_dir,
     }
     
     struct dirent* entry;
-    while ((entry = readdir(dir)) != NULL && file_count < 100) {
+    while ((entry = readdir(dir)) != NULL && file_count < 200) {
         if (entry->d_name[0] == '.') continue;
         
         char input_path[MAX_PATH];
