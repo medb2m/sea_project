@@ -13,7 +13,7 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #f5f7fa;
             min-height: 100vh;
             padding: 20px;
         }
@@ -21,23 +21,25 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-            padding: 30px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 40px;
         }
         
         h1 {
-            color: #333;
+            color: #1e3a8a;
             text-align: center;
             margin-bottom: 10px;
             font-size: 2.5em;
+            font-weight: 600;
         }
         
         .subtitle {
             text-align: center;
-            color: #666;
-            margin-bottom: 30px;
+            color: #64748b;
+            margin-bottom: 40px;
+            font-size: 1.1em;
         }
         
         .info-panel {
@@ -48,22 +50,33 @@
         }
         
         .info-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+            background: #ffffff;
+            color: #1e293b;
             padding: 20px;
-            border-radius: 10px;
+            border-radius: 8px;
             text-align: center;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .info-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
         }
         
         .info-card h3 {
-            font-size: 0.9em;
-            opacity: 0.9;
+            font-size: 0.85em;
+            color: #64748b;
             margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
         }
         
         .info-card .value {
             font-size: 2em;
-            font-weight: bold;
+            font-weight: 600;
+            color: #1e3a8a;
         }
         
         .controls {
@@ -74,16 +87,23 @@
         }
         
         .control-panel {
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            border: 2px solid #e9ecef;
+            background: #ffffff;
+            padding: 24px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .control-panel:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
         
         .control-panel h2 {
-            color: #333;
+            color: #1e3a8a;
             margin-bottom: 15px;
-            font-size: 1.5em;
+            font-size: 1.4em;
+            font-weight: 600;
         }
         
         .form-group {
@@ -92,127 +112,211 @@
         
         .form-group label {
             display: block;
-            margin-bottom: 5px;
-            color: #555;
+            margin-bottom: 8px;
+            color: #475569;
             font-weight: 500;
+            font-size: 0.95em;
         }
         
         .form-group input, .form-group select {
             width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 5px;
+            padding: 10px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
             font-size: 1em;
+            background: #ffffff;
+            color: #1e293b;
+            transition: all 0.2s ease;
         }
         
         .form-group input:focus, .form-group select:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-group input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+            cursor: pointer;
         }
         
         button {
             width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 12px 20px;
+            background: #3b82f6;
             color: white;
             border: none;
-            border-radius: 5px;
-            font-size: 1.1em;
-            font-weight: bold;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
             cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.2s ease;
         }
         
         button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            background: #2563eb;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        button:active:not(:disabled) {
+            transform: translateY(1px);
         }
         
         button:disabled {
-            opacity: 0.6;
+            opacity: 0.5;
             cursor: not-allowed;
+            background: #94a3b8;
         }
         
         .results {
             margin-top: 30px;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
+            padding: 24px;
+            background: #ffffff;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
             display: none;
+            min-height: 200px;
         }
         
         .results.show {
             display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .results h2 {
-            color: #333;
-            margin-bottom: 15px;
+            color: #1e3a8a;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            font-weight: 600;
         }
         
         .result-item {
-            background: white;
-            padding: 15px;
+            background: #f8fafc;
+            padding: 18px;
+            margin-bottom: 12px;
+            border-radius: 6px;
+            border-left: 4px solid #3b82f6;
+            transition: all 0.2s ease;
+        }
+        
+        .result-item:hover {
+            background: #f1f5f9;
+            border-left-color: #2563eb;
+        }
+        
+        .result-item h3 {
+            color: #1e3a8a;
             margin-bottom: 10px;
-            border-radius: 5px;
-            border-left: 4px solid #667eea;
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+        
+        .result-item p {
+            color: #475569;
+            margin: 5px 0;
+            font-size: 0.95em;
         }
         
         .result-item strong {
-            color: #667eea;
+            color: #1e293b;
+            font-weight: 600;
         }
         
         .progress-bar {
             width: 100%;
-            height: 30px;
-            background: #e9ecef;
-            border-radius: 15px;
+            height: 32px;
+            background: #e2e8f0;
+            border-radius: 8px;
             overflow: hidden;
-            margin: 20px 0;
+            margin: 24px 0;
             display: none;
+            border: 1px solid #cbd5e1;
         }
         
         .progress-bar.show {
             display: block;
+            animation: fadeIn 0.3s ease;
         }
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            background: #3b82f6;
             width: 0%;
-            transition: width 0.3s;
+            transition: width 0.5s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 0.9em;
         }
         
         .graphs {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
+            gap: 24px;
             margin-top: 30px;
         }
         
         .graph-container {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .graph-container h3 {
+            color: #1e3a8a;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+            font-weight: 600;
         }
         
         .graph-container img {
             width: 100%;
             height: auto;
-            border-radius: 5px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            object-fit: contain;
         }
         
         .alert {
-            padding: 15px;
-            border-radius: 5px;
+            padding: 14px 18px;
+            border-radius: 6px;
             margin-bottom: 20px;
             display: none;
+            border-left: 4px solid;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
         }
         
         .alert.show {
@@ -220,21 +324,27 @@
         }
         
         .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: #f0fdf4;
+            color: #166534;
+            border-left-color: #22c55e;
+            border: 1px solid #bbf7d0;
+            border-left-width: 4px;
         }
         
         .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: #fef2f2;
+            color: #991b1b;
+            border-left-color: #ef4444;
+            border: 1px solid #fecaca;
+            border-left-width: 4px;
         }
         
         .alert-info {
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+            background: #eff6ff;
+            color: #1e40af;
+            border-left-color: #3b82f6;
+            border: 1px solid #bfdbfe;
+            border-left-width: 4px;
         }
     </style>
 </head>
@@ -271,7 +381,7 @@
         <div class="controls">
             <div class="control-panel">
                 <h2>⚙️ Mono-thread</h2>
-                <p style="color: #666; margin-bottom: 15px;">Traitement séquentiel sur un seul thread</p>
+                <p style="color: #64748b; margin-bottom: 15px; font-size: 0.95em;">Traitement séquentiel sur un seul thread</p>
                 <button id="btn-mono" onclick="runMono()">Lancer Mono-thread</button>
             </div>
             
@@ -417,9 +527,9 @@
             if (data.mono_results && data.multi_results) {
                 const speedup = data.mono_results.time / data.multi_results.time;
                 contentDiv.innerHTML += `
-                    <div class="result-item" style="border-left-color: #28a745;">
+                    <div class="result-item" style="border-left-color: #22c55e; background: #f0fdf4;">
                         <h3>Speedup</h3>
-                        <p style="font-size: 1.5em;"><strong>${speedup.toFixed(2)}x</strong> plus rapide</p>
+                        <p style="font-size: 1.5em; color: #166534;"><strong>${speedup.toFixed(2)}x</strong> plus rapide</p>
                     </div>
                 `;
             }
@@ -439,16 +549,32 @@
         // Charger les graphiques
         function loadGraphs() {
             const container = document.getElementById('graphs-container');
-            container.innerHTML = `
-                <div class="graph-container">
-                    <h3>Comparaison</h3>
-                    <img src="/static/comparison.png?t=${Date.now()}" alt="Comparaison">
-                </div>
-                <div class="graph-container">
-                    <h3>Speedup</h3>
-                    <img src="/static/speedup.png?t=${Date.now()}" alt="Speedup">
-                </div>
-            `;
+            // Réserver l'espace pour éviter les décalages
+            container.style.minHeight = '400px';
+            container.style.opacity = '0';
+            
+            setTimeout(() => {
+                container.innerHTML = `
+                    <div class="graph-container">
+                        <h3>Comparaison</h3>
+                        <img src="/static/comparison.png?t=${Date.now()}" alt="Comparaison" onload="this.parentElement.parentElement.style.opacity='1'" style="opacity: 0; transition: opacity 0.3s ease;">
+                    </div>
+                    <div class="graph-container">
+                        <h3>Speedup</h3>
+                        <img src="/static/speedup.png?t=${Date.now()}" alt="Speedup" onload="this.parentElement.parentElement.style.opacity='1'" style="opacity: 0; transition: opacity 0.3s ease;">
+                    </div>
+                `;
+                
+                // Animation fade-in pour les images
+                setTimeout(() => {
+                    const images = container.querySelectorAll('img');
+                    images.forEach((img, index) => {
+                        setTimeout(() => {
+                            img.style.opacity = '1';
+                        }, index * 100);
+                    }, 100);
+                });
+            }, 50);
         }
         
         // Lancer mono-thread
