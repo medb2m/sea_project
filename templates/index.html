@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Processing Manager - Mono vs Multi-thread</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 30px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .info-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .info-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .info-card h3 {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+        
+        .info-card .value {
+            font-size: 2em;
+            font-weight: bold;
+        }
+        
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .control-panel {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .control-panel h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+        }
+        
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .results {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .results.show {
+            display: block;
+        }
+        
+        .results h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        
+        .result-item {
+            background: white;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .result-item strong {
+            color: #667eea;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+            display: none;
+        }
+        
+        .progress-bar.show {
+            display: block;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .graphs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .graph-container {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .graph-container img {
+            width: 100%;
+            height: auto;
+            border-radius: 5px;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .alert.show {
+            display: block;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 File Processing Manager</h1>
+        <p class="subtitle">Comparaison Mono-thread vs Multi-thread</p>
+        
+        <div id="alert-container"></div>
+        
+        <div class="info-panel">
+            <div class="info-card">
+                <h3>CPU Cœurs</h3>
+                <div class="value" id="cpu-count">-</div>
+            </div>
+            <div class="info-card">
+                <h3>Utilisation CPU</h3>
+                <div class="value" id="cpu-percent">-</div>
+            </div>
+            <div class="info-card">
+                <h3>Mémoire</h3>
+                <div class="value" id="memory-percent">-</div>
+            </div>
+            <div class="info-card">
+                <h3>Fichiers Input</h3>
+                <div class="value" id="input-files">-</div>
+            </div>
+            <div class="info-card">
+                <h3>Fichiers Output</h3>
+                <div class="value" id="output-files">-</div>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div class="control-panel">
+                <h2>⚙️ Mono-thread</h2>
+                <p style="color: #666; margin-bottom: 15px;">Traitement séquentiel sur un seul thread</p>
+                <button id="btn-mono" onclick="runMono()">Lancer Mono-thread</button>
+            </div>
+            
+            <div class="control-panel">
+                <h2>⚡ Multi-thread</h2>
+                <div class="form-group">
+                    <label for="num-threads">Nombre de threads:</label>
+                    <select id="num-threads">
+                        <option value="2">2 threads</option>
+                        <option value="4" selected>4 threads</option>
+                        <option value="6">6 threads</option>
+                        <option value="8">8 threads</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="use-lock" checked>
+                        Utiliser mutex (éviter race conditions)
+                    </label>
+                </div>
+                <button id="btn-multi" onclick="runMulti()">Lancer Multi-thread</button>
+            </div>
+            
+            <div class="control-panel">
+                <h2>📊 Benchmark</h2>
+                <div class="form-group">
+                    <label for="bench-runs">Nombre d'exécutions:</label>
+                    <input type="number" id="bench-runs" value="5" min="1" max="10">
+                </div>
+                <div class="form-group">
+                    <label for="bench-threads">Threads pour multi:</label>
+                    <input type="number" id="bench-threads" value="4" min="1" max="8">
+                </div>
+                <button id="btn-benchmark" onclick="runBenchmark()">Lancer Benchmark</button>
+            </div>
+        </div>
+        
+        <div class="progress-bar" id="progress-bar">
+            <div class="progress-fill" id="progress-fill">Traitement en cours...</div>
+        </div>
+        
+        <div class="results" id="results">
+            <h2>📈 Résultats</h2>
+            <div id="results-content"></div>
+        </div>
+        
+        <div class="graphs" id="graphs-container"></div>
+    </div>
+    
+    <script>
+        let statusInterval = null;
+        let systemInterval = null;
+        
+        // Mettre à jour les informations système
+        function updateSystemInfo() {
+            fetch('/api/system')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('cpu-count').textContent = data.cpu_count;
+                    document.getElementById('cpu-percent').textContent = data.cpu_percent.toFixed(1) + '%';
+                    document.getElementById('memory-percent').textContent = data.memory_percent.toFixed(1) + '%';
+                });
+            
+            fetch('/api/files')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('input-files').textContent = data.input;
+                    document.getElementById('output-files').textContent = data.output;
+                });
+        }
+        
+        // Afficher une alerte
+        function showAlert(message, type = 'info') {
+            const container = document.getElementById('alert-container');
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+            container.innerHTML = '';
+            container.appendChild(alert);
+            setTimeout(() => alert.classList.remove('show'), 5000);
+        }
+        
+        // Vérifier le statut du processus
+        function checkStatus() {
+            fetch('/api/status')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.running) {
+                        document.getElementById('progress-bar').classList.add('show');
+                        document.getElementById('btn-mono').disabled = true;
+                        document.getElementById('btn-multi').disabled = true;
+                        document.getElementById('btn-benchmark').disabled = true;
+                    } else {
+                        document.getElementById('progress-bar').classList.remove('show');
+                        document.getElementById('btn-mono').disabled = false;
+                        document.getElementById('btn-multi').disabled = false;
+                        document.getElementById('btn-benchmark').disabled = false;
+                        
+                        if (data.mono_results || data.multi_results || data.returncode !== undefined) {
+                            displayResults(data);
+                        }
+                        
+                        if (statusInterval) {
+                            clearInterval(statusInterval);
+                            statusInterval = null;
+                        }
+                    }
+                });
+        }
+        
+        // Afficher les résultats
+        function displayResults(data) {
+            const resultsDiv = document.getElementById('results');
+            const contentDiv = document.getElementById('results-content');
+            contentDiv.innerHTML = '';
+            
+            if (data.mono_results) {
+                const mono = data.mono_results;
+                contentDiv.innerHTML += `
+                    <div class="result-item">
+                        <h3>Mono-thread</h3>
+                        <p><strong>Temps:</strong> ${mono.time.toFixed(3)}s</p>
+                        <p><strong>Fichiers:</strong> ${mono.files}</p>
+                        <p><strong>Octets:</strong> ${(mono.bytes / 1024 / 1024).toFixed(2)} Mo</p>
+                        <p><strong>Débit:</strong> ${(mono.bytes / 1024 / 1024 / mono.time).toFixed(2)} Mo/s</p>
+                    </div>
+                `;
+            }
+            
+            if (data.multi_results) {
+                const multi = data.multi_results;
+                contentDiv.innerHTML += `
+                    <div class="result-item">
+                        <h3>Multi-thread (${multi.threads} threads)</h3>
+                        <p><strong>Temps:</strong> ${multi.time.toFixed(3)}s</p>
+                        <p><strong>Fichiers:</strong> ${multi.files}</p>
+                        <p><strong>Octets:</strong> ${(multi.bytes / 1024 / 1024).toFixed(2)} Mo</p>
+                        <p><strong>Débit:</strong> ${(multi.bytes / 1024 / 1024 / multi.time).toFixed(2)} Mo/s</p>
+                    </div>
+                `;
+            }
+            
+            if (data.mono_results && data.multi_results) {
+                const speedup = data.mono_results.time / data.multi_results.time;
+                contentDiv.innerHTML += `
+                    <div class="result-item" style="border-left-color: #28a745;">
+                        <h3>Speedup</h3>
+                        <p style="font-size: 1.5em;"><strong>${speedup.toFixed(2)}x</strong> plus rapide</p>
+                    </div>
+                `;
+            }
+            
+            resultsDiv.classList.add('show');
+            
+            // Générer les graphiques
+            fetch('/api/generate-graphs')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        loadGraphs();
+                    }
+                });
+        }
+        
+        // Charger les graphiques
+        function loadGraphs() {
+            const container = document.getElementById('graphs-container');
+            container.innerHTML = `
+                <div class="graph-container">
+                    <h3>Comparaison</h3>
+                    <img src="/static/comparison.png?t=${Date.now()}" alt="Comparaison">
+                </div>
+                <div class="graph-container">
+                    <h3>Speedup</h3>
+                    <img src="/static/speedup.png?t=${Date.now()}" alt="Speedup">
+                </div>
+            `;
+        }
+        
+        // Lancer mono-thread
+        function runMono() {
+            fetch('/api/run/mono')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        showAlert(data.error, 'error');
+                    } else {
+                        showAlert('Traitement mono-thread démarré', 'info');
+                        statusInterval = setInterval(checkStatus, 500);
+                    }
+                });
+        }
+        
+        // Lancer multi-thread
+        function runMulti() {
+            const threads = document.getElementById('num-threads').value;
+            const useLock = document.getElementById('use-lock').checked;
+            
+            fetch(`/api/run/multi?threads=${threads}&lock=${useLock}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        showAlert(data.error, 'error');
+                    } else {
+                        showAlert(`Traitement multi-thread démarré (${threads} threads)`, 'info');
+                        statusInterval = setInterval(checkStatus, 500);
+                    }
+                });
+        }
+        
+        // Lancer benchmark
+        function runBenchmark() {
+            const runs = document.getElementById('bench-runs').value;
+            const threads = document.getElementById('bench-threads').value;
+            
+            fetch(`/api/run/benchmark?runs=${runs}&threads=${threads}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.error) {
+                        showAlert(data.error, 'error');
+                    } else {
+                        showAlert(`Benchmark démarré (${runs} exécutions)`, 'info');
+                        statusInterval = setInterval(checkStatus, 1000);
+                    }
+                });
+        }
+        
+        // Initialisation
+        updateSystemInfo();
+        systemInterval = setInterval(updateSystemInfo, 2000);
+        checkStatus();
+    </script>
+</body>
+</html>
